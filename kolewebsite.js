@@ -2,63 +2,73 @@ let vid;
 let has_played = false;
 let is_playing = false;
 let revealSize;
+let revealVSize;
+let analyzer;
 
-const dripmatrix = [ [ 0, 0, 0, 0, 0 ],
-                 [ 0,  0, 0, 0, 0 ],
-                 [ 0, 0, 1, 0, 0 ] ,
-                 [ 0, 0, 0.5, 0, 0 ],
-                 [ 0, 0.05, 0.15, 0.05, 0 ] ]; 
+const vwidth = 640;
+const vheight = 468;
+
+function preload() {
+}
 
 function setup() {
-	createCanvas(windowWidth/2, windowHeight/2);
-  revealSize = min(width, height)/4;
-	// specify multiple formats for different browsers
-	vid = createVideo("yougotme_vid.mov");
+	createCanvas(windowWidth, windowHeight);
+  revealSize = min(width, height)/2;
+  if (revealSize == width / 2) {
+    revealVSize = revealSize * vwidth / width;
+  }
+  else {
+    revealVSize = revealSize * vheight / height;
+  }
+  vid = createVideo(["yougotme_vid.mp4", "yougotme_vid.mov"]);
 	vid.hide(); // by default video shows up in separate dom
 	// element. hide it and draw it to the canvas
 	// instead
+  analyzer = new p5.Amplitude();
+  vid.connect(analyzer);
   noStroke();
   background(0);
+
 }
 
 function draw() {
 	if (is_playing) {
-		image(vid, mouseX - revealSize / 2, mouseY - revealSize / 2, revealSize, revealSize, mouseX - revealSize / 2, mouseY - revealSize / 2, revealSize, revealSize); // draw the video frame to canvas
-    //translate(mouseX, mouseY);
-    //beginShape();
-    //// Exterior part of shape, clockwise winding
-    //vertex(-width, -height);
-    //vertex(width, -height);
-    //vertex(width, height);
-    //vertex(-width, height);
-    //// Interior part of shape, counter-clockwise winding
-    //beginContour();
-    //vertex(-revealSize, -revealSize);
-    //vertex(-revealSize, revealSize);
-    //vertex(revealSize, revealSize);
-    //vertex(revealSize, -revealSize);
-    //endContour();
-    //endShape(CLOSE);
-	}
-	else {
+    let vol = analyzer.getLevel();
+    vol = 0.65 + 0.9*vol;
+    let s = revealSize * vol;
+    let vs = revealVSize * vol;
+    //draw portion of video
+		image(vid, mouseX - s / 2, mouseY - s / 2, s, s,
+    (mouseX - s / 2)*vwidth / width, (mouseY - s / 2)*vheight/height, vs, vs);
+  }
+	if (!has_played) {
 		textAlign(CENTER);
     fill(255, 255, 255);
-		text('press anywhere, and keep on pressing', width/2, height/2);
+		text('press anywhere to play/pause', width/2, height/2);
 	}
 }
 
 function mousePressed() {
 	if (is_playing) {
 		vid.pause();
+    cursor();
 	}
 	else {
 		vid.loop();
+    noCursor();
 	}
 	has_played = true;
 	is_playing = !is_playing;
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-  revealSize = min(width, height)/6;
+  createCanvas(windowWidth, windowHeight);
+  background(0);
+  revealSize = min(width, height)/2;
+  if (revealSize == width / 2) {
+    revealVSize = revealSize * vwidth / width;
+  }
+  else {
+    revealVSize = revealSize * vheight / height;
+  }
 }
