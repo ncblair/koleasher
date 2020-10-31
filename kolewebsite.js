@@ -18,7 +18,7 @@ window.ontouchend = coordHandler;
 window.ontouchmove = coordHandler;
 
 function preload() {
-  vid = createVideo("yougotme_vid.mov");
+  vid = createVideo(["yougotme_vid.mov", "yougotme_vid.mp4", "yougotme_vid.ogv", "yougotme_vid.webm"]);
   //sound = createAudio('yougotme_vid.mp3');
 }
 
@@ -31,13 +31,9 @@ function setup() {
   else {
     revealVSize = revealSize * vheight / height;
   }
-
-	vid.hide(); // by default video shows up in separate dom
-
-	// element. hide it and draw it to the canvas
-	// instead
-  analyzer = new p5.Amplitude();
+  vid.hide();// hide it and draw it to the canvas
   //vid.connect(analyzer);
+  vid.play();
   noStroke();
   background(0);
 }
@@ -92,13 +88,15 @@ function coordHandler(event) {
       coordY = event.clientY;
       break;
     case 'touchstart':
-      vid.loop();
+      vid.play();
       is_playing = true;
       has_played = true;
+      document.getElementById("name").style.color="green";
       break;
     case 'touchend':
       vid.pause();
-      is_playing = false;
+      //is_playing = false;
+      document.getElementById("name").style.color="red";
       break;
     case 'touchmove':
       var firstTouch = event.touches[0];

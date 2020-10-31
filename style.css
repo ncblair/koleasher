@@ -1,3 +1,7 @@
+html {
+position:fixed;
+}
+
 h1 {
 	position:fixed;
   top:10px;
