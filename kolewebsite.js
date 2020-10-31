@@ -14,6 +14,7 @@ var coordY = 0;
  
 window.onmousemove = coordHandler;
 window.ontouchstart = coordHandler;
+window.ontouchend = coordHandler;
 window.ontouchmove = coordHandler;
 
 function preload() {
@@ -85,16 +86,24 @@ function windowResized() {
 
  
 function coordHandler(event) {
-    switch (event.type) {
-        case 'mousemove':
-            coordX = event.clientX;
-            coordY = event.clientY;
-            break;
-        case 'touchstart':
-        case 'touchmove':
-            var firstTouch = event.touches[0];
-            coordX = firstTouch.clientX;
-            coordY = firstTouch.clientY;
-            break;
-    }
+  switch (event.type) {
+    case 'mousemove':
+      coordX = event.clientX;
+      coordY = event.clientY;
+      break;
+    case 'touchstart':
+      vid.loop();
+      is_playing = true;
+      has_played = true;
+      break;
+    case 'touchend':
+      vid.pause();
+      is_playing = false;
+      break;
+    case 'touchmove':
+      var firstTouch = event.touches[0];
+      coordX = firstTouch.clientX;
+      coordY = firstTouch.clientY;
+      break;
+  }
 }
