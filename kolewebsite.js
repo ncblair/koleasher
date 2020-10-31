@@ -1,14 +1,24 @@
 let vid;
+//let sound;
 let has_played = false;
 let is_playing = false;
 let revealSize;
 let revealVSize;
-let analyzer;
+//let analyzer;
 
 const vwidth = 640;
 const vheight = 468;
 
+var coordX = 0;
+var coordY = 0;
+ 
+window.onmousemove = coordHandler;
+window.ontouchstart = coordHandler;
+window.ontouchmove = coordHandler;
+
 function preload() {
+  vid = createVideo("yougotme_vid.mov");
+  //sound = createAudio('yougotme_vid.mp3');
 }
 
 function setup() {
@@ -20,26 +30,25 @@ function setup() {
   else {
     revealVSize = revealSize * vheight / height;
   }
-  vid = createVideo(["yougotme_vid.mp4", "yougotme_vid.mov"]);
+
 	vid.hide(); // by default video shows up in separate dom
+
 	// element. hide it and draw it to the canvas
 	// instead
   analyzer = new p5.Amplitude();
-  vid.connect(analyzer);
+  //vid.connect(analyzer);
   noStroke();
   background(0);
-
 }
 
 function draw() {
 	if (is_playing) {
-    let vol = analyzer.getLevel();
-    vol = 0.65 + 0.9*vol;
+    vol = 0.85;
     let s = revealSize * vol;
     let vs = revealVSize * vol;
     //draw portion of video
-		image(vid, mouseX - s / 2, mouseY - s / 2, s, s,
-    (mouseX - s / 2)*vwidth / width, (mouseY - s / 2)*vheight/height, vs, vs);
+		image(vid, coordX - s / 2, coordY - s / 2, s, s,
+    (coordX - s / 2)*vwidth / width, (coordY - s / 2)*vheight/height, vs, vs);
   }
 	if (!has_played) {
 		textAlign(CENTER);
@@ -71,4 +80,21 @@ function windowResized() {
   else {
     revealVSize = revealSize * vheight / height;
   }
+}
+
+
+ 
+function coordHandler(event) {
+    switch (event.type) {
+        case 'mousemove':
+            coordX = event.clientX;
+            coordY = event.clientY;
+            break;
+        case 'touchstart':
+        case 'touchmove':
+            var firstTouch = event.touches[0];
+            coordX = firstTouch.clientX;
+            coordY = firstTouch.clientY;
+            break;
+    }
 }

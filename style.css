@@ -3,6 +3,7 @@ h1 {
   top:10px;
 	text-align:center;
 	width:100%;
+  font-family:monospace;
 }
 
 h1 > a {
